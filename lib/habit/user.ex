@@ -17,6 +17,6 @@ defmodule Habit.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:union_id, :open_id, :nick, :avatar_url, :gender])
-    |> validate_required([:open_id, :nick, :avatar_url)
+    |> validate_required([:open_id, :nick, :avatar_url])
   end
 end
