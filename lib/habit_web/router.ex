@@ -16,7 +16,7 @@ defmodule HabitWeb.Router do
   scope "/", HabitWeb do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    resources "/", HabitController,  only: [:index, :create, :update]
   end
 
   # Other scopes may use custom stacks.
