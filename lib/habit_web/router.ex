@@ -15,9 +15,14 @@ defmodule HabitWeb.Router do
 
   scope "/", HabitWeb do
     pipe_through :browser # Use the default browser stack
-
-    resources "/", HabitController,  only: [:index, :create, :update]
   end
+
+  scope "/api", HabitWeb do
+    pipe_through :api
+
+    resources "/habit", HabitController,  only: [:index, :create, :update]
+  end
+
 
   # Other scopes may use custom stacks.
   # scope "/api", HabitWeb do
