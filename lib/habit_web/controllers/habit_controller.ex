@@ -3,7 +3,8 @@ defmodule HabitWeb.HabitController do
   alias Habit.Habit
 
   def index(conn, %{"code" => code, "openId" => open_id}) do
-    json(conn, %{success: true, apiMessage: "Hello World!"})
+    data = Habit.list(open_id)
+    json(conn, %{success: true, data: data})
   end
 
   def create(conn, %{"code" => code, "openId" => open_id, "name" => name, "score" => score}) do

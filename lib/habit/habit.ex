@@ -10,7 +10,7 @@ defmodule Habit.Habit do
     field :description, :string
     field :name, :string
     field :score, :integer
-    field :status, :string
+    field :status, :string, default: "init"
     field :user_id, :id
 
     timestamps()
@@ -26,24 +26,6 @@ defmodule Habit.Habit do
   @wechat_code_to_session_api "https://api.weixin.qq.com/sns/jscode2session"
   #@app_id Application.get_env(:habits, Wechat)[:app_id]
   #@secret Application.get_env(:habits, Wechat)[:secret]
-
-  """
-  添加习惯的接口
-
-  正确则继续添加习惯
-  不正确则返回 用户身份验证失败 或者 登录太频繁，稍后再试
-
-  习惯的名称、习惯的分数
-
-  添加到数据库
-
-  删除习惯
-
-  修改习惯
-
-
-  
-  """
 
   def create(code, open_id, name, score) when byte_size(code) > 0 and byte_size(open_id) > 0 and is_binary(code) and is_binary(open_id) do
     if (is_undefined_or_null(code) || is_undefined_or_null(open_id)) do
@@ -128,6 +110,14 @@ defmodule Habit.Habit do
       _ ->
         ret
     end
+  end
+
+  def list(open_id) do
+    query = from h in Habit,
+      join: u in User,
+      where: u.open_id == ^open_id and u.id == h.user_id,
+      select: %{habitName: h.name, habitScore: h.score, status: h.status}
+    query |> Repo.all
   end
 
   defp is_undefined_or_null(value) do
