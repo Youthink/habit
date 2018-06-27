@@ -116,7 +116,7 @@ defmodule Habit.Habit do
     query = from h in Habit,
       join: u in User,
       where: u.open_id == ^open_id and u.id == h.user_id,
-      select: %{habitName: h.name, habitScore: h.score, status: h.status}
+      select: %{HabitId: h.id, habitName: h.name, habitScore: h.score, status: h.status}
     query |> Repo.all
   end
 
