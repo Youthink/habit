@@ -1,6 +1,8 @@
 defmodule Habit.Habit do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
+  alias Habit.{Habit, Repo, User}
 
   require Logger
 
@@ -8,7 +10,7 @@ defmodule Habit.Habit do
     field :description, :string
     field :name, :string
     field :score, :integer
-    field :status, :string
+    field :status, :string, default: "init"
     field :user_id, :id
 
     timestamps()
@@ -18,43 +20,61 @@ defmodule Habit.Habit do
   def changeset(habit, attrs) do
     habit
     |> cast(attrs, [:name, :description, :score, :status])
-    |> validate_required([:name, :status])
+    |> validate_required([:name])
   end
 
   @wechat_code_to_session_api "https://api.weixin.qq.com/sns/jscode2session"
-  @app_id Application.get_env(:habits, Wechat)[:app_id]
-  @secret Application.get_env(:habits, Wechat)[:secret]
+  #@app_id Application.get_env(:habits, Wechat)[:app_id]
+  #@secret Application.get_env(:habits, Wechat)[:secret]
 
-  """
-  添加习惯的接口
-
-  正确则继续添加习惯
-  不正确则返回 用户身份验证失败 或者 登录太频繁，稍后再试
-
-  习惯的名称、习惯的分数
-
-  添加到数据库
-
-  
-  """
-
-  def create(code, open_id) when byte_size(code) > 0 and byte_size(open_id) and is_binary(code) and is_binary(open_id) do
+  def create(code, open_id, name, score) when byte_size(code) > 0 and byte_size(open_id) > 0 and is_binary(code) and is_binary(open_id) do
     if (is_undefined_or_null(code) || is_undefined_or_null(open_id)) do
       {:error, :user_info_invalid}
     else
-      code_valid?(code, open_id)
+      #code_valid?(code, open_id)
+      #TODO:暂时不验证用户信息
+      if (is_undefined_or_null(name)) do
+        {:error, :habit_name_invalid}
+      else
+        user = fetch_user(open_id)
+        |> add_habit(name, score)
+      end
     end
   end
 
-  def create(code, open_id) do
+  def create(code, open_id, name, score) do
     {:error, :user_info_invalid}
+  end
+
+  defp add_habit(user, name, score) do
+    #TODO: score need to make sure that is digital
+    if (is_undefined_or_null(score)) do
+      score = 0;
+    end
+    %Habit{}
+    |> changeset(%{
+      user_id: user.id,
+      name: name,
+      score: score
+    })
+    |> Repo.insert
+
+    {:ok, :habit_create_success}
+  end
+
+  defp fetch_user(open_id) do
+    case User.get_user(open_id) do
+      user = %User{} -> user
+      _ ->
+        {:ok, newUser} = User.create(open_id)
+        newUser
+    end
   end
 
   defp code_valid?(code, open_id) do
     case Mix.env do
       :test ->
         code == "openid:#{open_id}"
-
       _ ->
         fetch_open_id_from_code(code) == open_id
     end
@@ -92,6 +112,14 @@ defmodule Habit.Habit do
     end
   end
 
+  def list(open_id) do
+    query = from h in Habit,
+      join: u in User,
+      where: u.open_id == ^open_id and u.id == h.user_id,
+      select: %{HabitId: h.id, habitName: h.name, habitScore: h.score, status: h.status}
+    query |> Repo.all
+  end
+
   defp is_undefined_or_null(value) do
     if value === "undefined" || value === "null" do
       true
@@ -99,4 +127,5 @@ defmodule Habit.Habit do
       false
     end
   end
+
 end
