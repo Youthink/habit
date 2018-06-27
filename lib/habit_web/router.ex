@@ -21,6 +21,7 @@ defmodule HabitWeb.Router do
     pipe_through :api
 
     resources "/habit", HabitController,  only: [:index, :create, :update]
+    post "/checkIn", HabitController, :check_in
   end
 
 

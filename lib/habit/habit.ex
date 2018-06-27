@@ -2,7 +2,7 @@ defmodule Habit.Habit do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
-  alias Habit.{Habit, Repo, User}
+  alias Habit.{Habit, Repo, User, Day}
 
   require Logger
 
@@ -118,6 +118,19 @@ defmodule Habit.Habit do
       where: u.open_id == ^open_id and u.id == h.user_id,
       select: %{HabitId: h.id, habitName: h.name, habitScore: h.score, status: h.status}
     query |> Repo.all
+  end
+
+  def check_in(open_id, habit_id) when byte_size(open_id) > 0 do
+    user = fetch_user(open_id)
+    #TODO: First of all, according to the date and habit_id to query
+    case Day.create(user, habit_id) do
+      {:ok, day} -> {:ok, :check_in_success}
+      _ ->  {:error, :check_in_fail}
+    end
+  end
+
+  def check_in(open_id, habit_id) do
+    {:error, :check_in_fail}
   end
 
   defp is_undefined_or_null(value) do

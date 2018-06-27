@@ -24,6 +24,16 @@ defmodule HabitWeb.HabitController do
     fail(conn, %{apiMessage: "参数有误", apiCode: 2000})
   end
 
+  def check_in(conn, %{"code" => code, "openId" => open_id, "habitId" => habit_id}) do
+    #TODO: Date of need parameters
+    case Habit.check_in(open_id, habit_id) do
+      {:error, :check_in_fail}
+        -> fail(conn, %{apiMessage: "习惯打卡失败", apiCode: 2002})
+      {:ok, :check_in_success}
+        -> success(conn, %{apiMessage: "习惯打卡成功"})
+    end
+  end
+
   defp success(conn, data) do
     json(conn, Map.merge(data, %{success: true}))
   end
