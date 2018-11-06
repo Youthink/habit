@@ -11,7 +11,8 @@ defmodule Habit.Habit do
     field :name, :string
     field :score, :integer
     field :status, :string, default: "init"
-    field :user_id, :id
+
+    belongs_to :user, User
 
     timestamps()
   end
@@ -19,7 +20,7 @@ defmodule Habit.Habit do
   @doc false
   def changeset(habit, attrs) do
     habit
-    |> cast(attrs, [:name, :description, :score, :status])
+    |> cast(attrs, [:user_id, :name, :description, :score, :status])
     |> validate_required([:name])
   end
 

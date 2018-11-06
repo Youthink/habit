@@ -14,7 +14,7 @@ defmodule HabitWeb.HabitController do
       {:error, :wx_code_limit}
         -> fail(conn, %{apiMessage: "微信登录code请求过于频繁", apiCode: 1001})
       {:error, :habit_name_invalid}
-        -> fail(conn, %{apiMessage: "无效的习惯民称，习惯创建失败", apiCode: 2001})
+        -> fail(conn, %{apiMessage: "无效的习惯名称，习惯创建失败", apiCode: 2001})
       {:ok, :habit_create_success}
         -> success(conn, %{apiMessage: "习惯创建成功"})
     end
