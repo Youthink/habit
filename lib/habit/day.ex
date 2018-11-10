@@ -40,7 +40,7 @@ defmodule Habit.Day do
     finish_habit_query = from h in Habit,
       join: f in subquery(finish_habit_id_query),
       where: h.id == f.habit_id,
-      select: %{id: h.id, name: h.name, score: h.score, date: f.inserted_at}
+      select: %{id: h.id, name: h.name, score: h.score, date: f.inserted_at, status: "finish"}
     finish_habit_query |> Repo.all
   end
 end
