@@ -22,6 +22,7 @@ defmodule HabitWeb.Router do
 
     resources "/habit", HabitController,  only: [:index, :create, :update]
     post "/checkIn", HabitController, :check_in
+    get "/day", DayController, :index
   end
 
 

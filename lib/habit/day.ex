@@ -1,13 +1,15 @@
 defmodule Habit.Day do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias Habit.{Habit, Repo, User, Day}
 
 
   schema "days" do
     field :status, :string
-    field :user_id, :id
-    field :habit_id, :id
+
+    belongs_to :user, User
+    belongs_to :habit, Habit
 
     timestamps()
   end
@@ -15,7 +17,7 @@ defmodule Habit.Day do
   @doc false
   def changeset(day, attrs) do
     day
-    |> cast(attrs, [:status])
+    |> cast(attrs, [:status, :user_id, :habit_id])
     |> validate_required([:status])
   end
 
@@ -27,5 +29,18 @@ defmodule Habit.Day do
       status: "complate"
     })
     |> Repo.insert
+  end
+
+  def list(open_id, date) do
+    date = Date.from_iso8601!(date)
+    finish_habit_id_query = from d in Day,
+      join: u in User,
+      where: u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^date
+
+    finish_habit_query = from h in Habit,
+      join: f in subquery(finish_habit_id_query),
+      where: h.id == f.habit_id,
+      select: %{id: h.id, name: h.name, score: h.score, date: f.inserted_at}
+    finish_habit_query |> Repo.all
   end
 end
