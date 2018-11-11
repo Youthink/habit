@@ -33,9 +33,7 @@ defmodule Habit.Day do
 
   def list(open_id, date) do
     date = Date.from_iso8601!(date)
-    finish_habit_id_query = from d in Day,
-      join: u in User,
-      where: u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^date
+    finish_habit_id_query = finish_habit_id_query(open_id, date)
 
     finish_habit_query = from h in Habit,
       join: f in subquery(finish_habit_id_query),
@@ -57,7 +55,30 @@ defmodule Habit.Day do
       select: %{id: h.id, name: h.name, score: h.score, status: "init"}
     unfinish_list = unfinish_habit_query |> Repo.all
 
-    unfinish_list ++ finish_list
+    habits_list = unfinish_list ++ finish_list
 
+    total_score = sum_score_finish_habit(open_id, date)
+
+    %{
+      "habitsList" => habits_list,
+      "todayTotalScore" => total_score
+    }
+
+  end
+
+  defp finish_habit_id_query(open_id, date) do
+    from d in Day,
+      join: u in User,
+      where: u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^date
+  end
+
+  defp sum_score_finish_habit(open_id, date) do
+    finish_habit_id_query = finish_habit_id_query(open_id, date)
+
+    finish_habit_query = from h in Habit,
+      join: f in subquery(finish_habit_id_query),
+      where: h.id == f.habit_id,
+      select: sum(h.score)
+    finish_habit_query |> Repo.one
   end
 end
