@@ -62,7 +62,7 @@ defmodule Habit.Day do
 
     total_score = sum_score_finish_habit(open_id, start_date, end_date)
 
-    week_total_score = sum_score_week_finish_habit(open_id, start_date, end_date)
+    week_total_score = sum_score_week_finish_habit(open_id, start_date)
 
     %{
       "habitsList" => habits_list,
@@ -81,16 +81,20 @@ defmodule Habit.Day do
   end
 
   defp sum_score_finish_habit(open_id, start_date, end_date) do
+
     finish_habit_id_query = finish_habit_id_query(open_id, start_date, end_date)
 
     finish_habit_query = from h in Habit,
       join: f in subquery(finish_habit_id_query),
       where: h.id == f.habit_id,
       select: sum(h.score)
-    finish_habit_query |> Repo.one
+    finish_habit_query |> Repo.one || 0
   end
 
-  defp sum_score_week_finish_habit(open_id, start_date, end_date) do
-    0
+  defp sum_score_week_finish_habit(open_id, start_date) do
+    end_date = Date.add(start_date, 1)
+    week_num = Date.day_of_week(start_date)
+    monday_date = Date.add(start_date, -(week_num - 1))
+    sum_score_finish_habit(open_id, monday_date, end_date)
   end
 end
