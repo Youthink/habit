@@ -32,8 +32,9 @@ defmodule Habit.Day do
   end
 
   def list(open_id, date) do
-    date = Date.from_iso8601!(date)
-    finish_habit_id_query = finish_habit_id_query(open_id, date)
+    start_date = Date.from_iso8601!(date)
+    end_date = Date.add(start_date, 1)
+    finish_habit_id_query = finish_habit_id_query(open_id, start_date, end_date)
 
     finish_habit_query = from h in Habit,
       join: f in subquery(finish_habit_id_query),
@@ -43,7 +44,9 @@ defmodule Habit.Day do
 
     finish_habit_id_query_2 = from d in Day,
       join: u in User,
-      where: u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^date,
+      where: u.open_id == ^open_id and
+        fragment("?::date", d.inserted_at) >= ^start_date and
+        fragment("?::date", d.inserted_at) <= ^end_date,
       select: d.habit_id
 
     arr = finish_habit_id_query_2 |> Repo.all
@@ -57,28 +60,37 @@ defmodule Habit.Day do
 
     habits_list = unfinish_list ++ finish_list
 
-    total_score = sum_score_finish_habit(open_id, date)
+    total_score = sum_score_finish_habit(open_id, start_date, end_date)
+
+    week_total_score = sum_score_week_finish_habit(open_id, start_date, end_date)
 
     %{
       "habitsList" => habits_list,
-      "todayTotalScore" => total_score
+      "todayTotalScore" => total_score,
+      "weekTotalScore" => week_total_score
     }
 
   end
 
-  defp finish_habit_id_query(open_id, date) do
+  defp finish_habit_id_query(open_id, start_date, end_date) do
     from d in Day,
       join: u in User,
-      where: u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^date
+      where: u.open_id == ^open_id and
+        fragment("?::date", d.inserted_at) >= ^start_date and
+        fragment("?::date", d.inserted_at) <= ^end_date
   end
 
-  defp sum_score_finish_habit(open_id, date) do
-    finish_habit_id_query = finish_habit_id_query(open_id, date)
+  defp sum_score_finish_habit(open_id, start_date, end_date) do
+    finish_habit_id_query = finish_habit_id_query(open_id, start_date, end_date)
 
     finish_habit_query = from h in Habit,
       join: f in subquery(finish_habit_id_query),
       where: h.id == f.habit_id,
       select: sum(h.score)
     finish_habit_query |> Repo.one
+  end
+
+  defp sum_score_week_finish_habit(open_id, start_date, end_date) do
+    0
   end
 end
