@@ -4,6 +4,9 @@ defmodule Habit.Day do
   import Ecto.Query
   alias Habit.{Habit, Repo, User, Day}
 
+  @timestamps_opts [
+    autogenerate: {EctoTimestamps.Local, :autogenerate, [:sec]}
+  ]
 
   schema "days" do
     field :status, :string

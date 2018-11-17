@@ -20,7 +20,7 @@ defmodule Habit.Mixfile do
   def application do
     [
       mod: {Habit.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :ecto_timestamps]
     ]
   end
 
@@ -43,6 +43,7 @@ defmodule Habit.Mixfile do
       {:poison, "~> 3.1"},
       {:httpoison, "~> 1.0"},
       {:timex, "~> 3.1"},
+      {:ecto_timestamps, "~> 1.0.0"},
       {:cowboy, "~> 1.0"}
     ]
   end
