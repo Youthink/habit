@@ -1,10 +1,33 @@
 defmodule HabitWeb.HabitController do
   use HabitWeb, :controller
-  alias Habit.Habit
+  alias Habit.{Habit, Repo}
 
   def index(conn, %{"code" => code, "openId" => open_id}) do
     data = Habit.list(open_id)
     json(conn, %{success: true, data: data})
+  end
+
+  def show(conn, %{"id" => id}) do
+    case Repo.get(Habit, id) do
+      nil -> fail(conn, %{apiMessage: "无效的 habit id"})
+      habit = %Habit{} ->
+        data = %{
+          id: habit.id,
+          name: habit.name,
+          score: habit.score
+        }
+        json(conn, %{success: true, data: data})
+    end
+  end
+
+  def update(conn, %{"code" => code, "openId" => open_id, "name" => name, "score" => score, "id" => id}) do
+    case Habit.update(id, name, score) do
+      {:error, :habit_id_invalid}
+        -> fail(conn, %{apiMessage: "无效的习惯id，习惯编辑失败", apiCode: 3000})
+      {:ok}
+        -> success(conn, %{apiMessage: "习惯编辑成功"})
+      _ -> fail(conn, %{apiMessage: "习惯编辑失败"})
+    end
   end
 
   def create(conn, %{"code" => code, "openId" => open_id, "name" => name, "score" => score}) do

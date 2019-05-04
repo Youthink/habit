@@ -47,6 +47,18 @@ defmodule Habit.Habit do
     {:error, :user_info_invalid}
   end
 
+  def update(id, name, score) do
+    case Repo.get(Habit, id) do
+      nil -> {:error, :habit_id_invalid}
+      habit = %Habit{} ->
+        a = habit
+        |> changeset(%{name: habit.name, score: habit.score})
+        |> Repo.update
+        IO.inspect a
+    end
+  end
+
+
   defp add_habit(user, name, score) do
     #TODO: score need to make sure that is digital
     if (is_undefined_or_null(score)) do
