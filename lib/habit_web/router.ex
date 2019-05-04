@@ -20,9 +20,10 @@ defmodule HabitWeb.Router do
   scope "/api", HabitWeb do
     pipe_through :api
 
-    resources "/habit", HabitController,  only: [:index, :create, :update]
+    resources "/habit", HabitController
     post "/checkIn", HabitController, :check_in
     get "/day", DayController, :index
+    get "/decrypt", ToolController, :decrypt
   end
 
 
