@@ -15,7 +15,10 @@ defmodule HabitWeb.Router do
 
   scope "/", HabitWeb do
     pipe_through :browser # Use the default browser stack
+
+    get "/", PageController, :index
   end
+
 
   scope "/api", HabitWeb do
     pipe_through :api
@@ -24,6 +27,15 @@ defmodule HabitWeb.Router do
     post "/checkIn", HabitController, :check_in
     get "/day", DayController, :index
     get "/decrypt", ToolController, :decrypt
+  end
+
+  scope "/auth", HabitWeb do
+    pipe_through [:browser]
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+    post "/:provider/callback", AuthController, :callback
+    post "/logout", AuthController, :delete
   end
 
 
