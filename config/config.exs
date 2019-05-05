@@ -23,6 +23,7 @@ config :logger, :console,
   metadata: [:request_id]
 
 config :ueberauth, Ueberauth,
+  base_path: "/api/v1/auth",
   providers: [
     github: {Ueberauth.Strategy.Github, []}
   ]
