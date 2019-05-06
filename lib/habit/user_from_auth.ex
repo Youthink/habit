@@ -19,6 +19,8 @@ defmodule UserFromAuth do
     {:ok, basic_info(auth)}
   end
 
+  defp email_from_auth( %{info: %{email: email} }), do: email
+
   # github does it this way
   defp avatar_from_auth( %{info: %{urls: %{avatar_url: image}} }), do: image
 
@@ -33,7 +35,12 @@ defmodule UserFromAuth do
   end
 
   defp basic_info(auth) do
-    %{id: auth.uid, name: name_from_auth(auth), avatar: avatar_from_auth(auth)}
+    %{
+      id: auth.uid,
+      name: name_from_auth(auth),
+      email: email_from_auth(auth),
+      avatar: avatar_from_auth(auth)
+    }
   end
 
   defp name_from_auth(auth) do
