@@ -4,7 +4,8 @@ defmodule HabitWeb.HabitController do
 
   def index(conn, %{}) do
     current_user = get_session(conn, :current_user)
-    if (current_user) do
+
+    if current_user do
       data = Habit.list(current_user.id)
       json(conn, %{success: true, data: data})
     else
@@ -47,19 +48,25 @@ defmodule HabitWeb.HabitController do
     end
   end
 
-  def create(conn, %{"code" => code, "openId" => open_id, "name" => name, "score" => score}) do
-    case Habit.create(code, open_id, name, score) do
-      {:error, :user_info_invalid} ->
-        fail(conn, %{apiMessage: "用户身份验证失败", apiCode: 1000})
+  def create(conn, %{"name" => name, "score" => score}) do
+    current_user = get_session(conn, :current_user)
 
-      {:error, :wx_code_limit} ->
-        fail(conn, %{apiMessage: "微信登录code请求过于频繁", apiCode: 1001})
+    if current_user do
+      case Habit.create(current_user, name, score) do
+        {:error, :user_info_invalid} ->
+          fail(conn, %{apiMessage: "用户身份验证失败", apiCode: 1000})
 
-      {:error, :habit_name_invalid} ->
-        fail(conn, %{apiMessage: "无效的习惯名称，习惯创建失败", apiCode: 2001})
+        {:error, :habit_name_invalid} ->
+          fail(conn, %{apiMessage: "无效的习惯名称，习惯创建失败", apiCode: 2001})
 
-      {:ok, :habit_create_success} ->
-        success(conn, %{apiMessage: "习惯创建成功"})
+        {:error, :habit_score_invalid} ->
+          fail(conn, %{apiMessage: "无效的习惯分数，习惯创建失败", apiCode: 2001})
+
+        {:ok, :habit_create_success} ->
+          success(conn, %{apiMessage: "习惯创建成功"})
+      end
+    else
+      fail(conn, %{apiMessage: "请登录"})
     end
   end
 

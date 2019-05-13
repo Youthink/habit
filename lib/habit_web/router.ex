@@ -10,11 +10,11 @@ defmodule HabitWeb.Router do
     pipe_through(:api)
 
     scope "/habit" do
-      resources "/", HabitController,  only: [:index, :create, :update]
-      post "/complete", HabitController, :complete
+      resources("/", HabitController, only: [:index, :create, :update])
+      post("/complete", HabitController, :complete)
     end
 
-    get "/day", DayController, :index
+    get("/day", DayController, :index)
 
     delete("/logout", AuthController, :delete)
 
