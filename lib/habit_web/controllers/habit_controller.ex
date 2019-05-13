@@ -2,9 +2,14 @@ defmodule HabitWeb.HabitController do
   use HabitWeb, :controller
   alias Habit.{Habit, Repo}
 
-  def index(conn, %{"code" => code, "openId" => open_id}) do
-    data = Habit.list(open_id)
-    json(conn, %{success: true, data: data})
+  def index(conn, %{}) do
+    current_user = get_session(conn, :current_user)
+    if (current_user) do
+      data = Habit.list(current_user.id)
+      json(conn, %{success: true, data: data})
+    else
+      fail(conn, %{apiMessage: "请登录"})
+    end
   end
 
   def show(conn, %{"id" => id}) do
