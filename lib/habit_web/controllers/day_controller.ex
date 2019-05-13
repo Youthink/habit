@@ -11,7 +11,6 @@ defmodule HabitWeb.DayController do
     json(conn, %{success: false})
   end
 
-
   defp success(conn, data) do
     json(conn, Map.merge(data, %{success: true}))
   end
@@ -19,5 +18,4 @@ defmodule HabitWeb.DayController do
   defp fail(conn, data) do
     json(conn, Map.merge(data, %{success: false}))
   end
-
 end

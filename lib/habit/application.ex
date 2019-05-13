@@ -11,7 +11,7 @@ defmodule Habit.Application do
       # Start the Ecto repository
       supervisor(Habit.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(HabitWeb.Endpoint, []),
+      supervisor(HabitWeb.Endpoint, [])
       # Start your own worker by calling: Habit.Worker.start_link(arg1, arg2, arg3)
       # worker(Habit.Worker, [arg1, arg2, arg3]),
     ]

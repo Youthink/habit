@@ -5,18 +5,17 @@ defmodule Habit.User do
   alias Habit.{User, Repo}
   alias Ueberauth.Auth
 
-
   schema "users" do
-    field :avatar_url, :string
-    field :gender, :string
-    field :nick, :string
-    field :name, :string
-    field :email, :string
-    field :open_id, :string
-    field :union_id, :string
-    field :location, :string
-    field :github_id, :string
-    field :sign_source, :string
+    field(:avatar_url, :string)
+    field(:gender, :string)
+    field(:nick, :string)
+    field(:name, :string)
+    field(:email, :string)
+    field(:open_id, :string)
+    field(:union_id, :string)
+    field(:location, :string)
+    field(:github_id, :string)
+    field(:sign_source, :string)
 
     timestamps()
   end
@@ -31,13 +30,16 @@ defmodule Habit.User do
   def create(user) do
     %User{}
     |> changeset(user)
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   def get_user(open_id) do
-    query = from user in User,
-      where: user.open_id== ^open_id
-    query |> Repo.one
+    query =
+      from(user in User,
+        where: user.open_id == ^open_id
+      )
+
+    query |> Repo.one()
   end
 
   def find_or_create_from_auth(%Auth{provider: :github} = auth) do
@@ -45,7 +47,9 @@ defmodule Habit.User do
     case find_github_user(auth.uid) do
       user = %User{} ->
         {:ok, user}
-      _ -> create_github_user(auth)
+
+      _ ->
+        create_github_user(auth)
     end
   end
 
@@ -54,16 +58,17 @@ defmodule Habit.User do
   end
 
   defp find_github_user(github_id) do
-    query = from user in User,
-      where: user.github_id == ^Integer.to_string(github_id)
-    query |> Repo.one
+    query =
+      from(user in User,
+        where: user.github_id == ^Integer.to_string(github_id)
+      )
+
+    query |> Repo.one()
   end
 
   defp create_github_user(auth) do
-    user = basic_info(auth)
-    a = create(user)
-    IO.inspect a
-    a
+    basic_info(auth)
+    |> create()
   end
 
   defp basic_info(auth) do
@@ -78,13 +83,13 @@ defmodule Habit.User do
     }
   end
 
-  defp email_from_auth( %{info: %{email: email} }), do: email
+  defp email_from_auth(%{info: %{email: email}}), do: email
 
-  defp location_from_auth( %{info: %{location: location} }), do: location
+  defp location_from_auth(%{info: %{location: location}}), do: location
 
-  defp name_from_auth( %{info: %{nickname: name} }), do: name
+  defp name_from_auth(%{info: %{nickname: name}}), do: name
 
-  defp avatar_from_auth( %{info: %{urls: %{avatar_url: image}} }), do: image
+  defp avatar_from_auth(%{info: %{urls: %{avatar_url: image}}}), do: image
 
   defp avatar_from_auth(_) do
     nil
@@ -94,8 +99,9 @@ defmodule Habit.User do
     if auth.info.name do
       auth.info.name
     else
-      name = [auth.info.first_name, auth.info.last_name]
-      |> Enum.filter(&(&1 != nil and &1 != ""))
+      name =
+        [auth.info.first_name, auth.info.last_name]
+        |> Enum.filter(&(&1 != nil and &1 != ""))
 
       cond do
         length(name) == 0 -> auth.info.nickname
@@ -103,4 +109,4 @@ defmodule Habit.User do
       end
     end
   end
- end
+end

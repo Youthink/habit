@@ -5,8 +5,7 @@ defmodule HabitWeb.AuthController do
   use HabitWeb, :controller
   alias Habit.User
 
-  plug Ueberauth
-
+  plug(Ueberauth)
 
   def request(conn, _params) do
   end
@@ -37,6 +36,7 @@ defmodule HabitWeb.AuthController do
           },
           apiMessage: "Successfully authenticated."
         })
+
       {:error, reason} ->
         conn
         |> json(%{success: false, apiMessage: reason})

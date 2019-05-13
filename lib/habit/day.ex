@@ -9,10 +9,10 @@ defmodule Habit.Day do
   ]
 
   schema "days" do
-    field :status, :string
+    field(:status, :string)
 
-    belongs_to :user, User
-    belongs_to :habit, Habit
+    belongs_to(:user, User)
+    belongs_to(:habit, Habit)
 
     timestamps()
   end
@@ -31,7 +31,7 @@ defmodule Habit.Day do
       habit_id: habit_id,
       status: "complate"
     })
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   def list(open_id, date) do
@@ -39,27 +39,35 @@ defmodule Habit.Day do
     end_date = Date.add(start_date, 1)
     finish_habit_id_query = finish_habit_id_query(open_id, start_date, end_date)
 
-    finish_habit_query = from h in Habit,
-      join: f in subquery(finish_habit_id_query),
-      where: h.id == f.habit_id,
-      select: %{id: h.id, name: h.name, score: h.score, date: f.inserted_at, status: "finish"}
-    finish_list  = finish_habit_query |> Repo.all
+    finish_habit_query =
+      from(h in Habit,
+        join: f in subquery(finish_habit_id_query),
+        where: h.id == f.habit_id,
+        select: %{id: h.id, name: h.name, score: h.score, date: f.inserted_at, status: "finish"}
+      )
 
-    finish_habit_id_query_2 = from d in Day,
-      join: u in User,
-      where: u.open_id == ^open_id and
-        fragment("?::date", d.inserted_at) >= ^start_date and
-        fragment("?::date", d.inserted_at) <= ^end_date,
-      select: d.habit_id
+    finish_list = finish_habit_query |> Repo.all()
 
-    arr = finish_habit_id_query_2 |> Repo.all
+    finish_habit_id_query_2 =
+      from(d in Day,
+        join: u in User,
+        where:
+          u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^start_date and
+            fragment("?::date", d.inserted_at) <= ^end_date,
+        select: d.habit_id
+      )
 
-    unfinish_habit_query = from h in Habit,
-      where: h.id not in ^arr,
-      distinct: h.id,
-      order_by: h.score,
-      select: %{id: h.id, name: h.name, score: h.score, status: "init"}
-    unfinish_list = unfinish_habit_query |> Repo.all
+    arr = finish_habit_id_query_2 |> Repo.all()
+
+    unfinish_habit_query =
+      from(h in Habit,
+        where: h.id not in ^arr,
+        distinct: h.id,
+        order_by: h.score,
+        select: %{id: h.id, name: h.name, score: h.score, status: "init"}
+      )
+
+    unfinish_list = unfinish_habit_query |> Repo.all()
 
     habits_list = unfinish_list ++ finish_list
 
@@ -72,26 +80,28 @@ defmodule Habit.Day do
       "todayTotalScore" => total_score,
       "weekTotalScore" => week_total_score
     }
-
   end
 
   defp finish_habit_id_query(open_id, start_date, end_date) do
-    from d in Day,
+    from(d in Day,
       join: u in User,
-      where: u.open_id == ^open_id and
-        fragment("?::date", d.inserted_at) >= ^start_date and
-        fragment("?::date", d.inserted_at) <= ^end_date
+      where:
+        u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^start_date and
+          fragment("?::date", d.inserted_at) <= ^end_date
+    )
   end
 
   defp sum_score_finish_habit(open_id, start_date, end_date) do
-
     finish_habit_id_query = finish_habit_id_query(open_id, start_date, end_date)
 
-    finish_habit_query = from h in Habit,
-      join: f in subquery(finish_habit_id_query),
-      where: h.id == f.habit_id,
-      select: sum(h.score)
-    finish_habit_query |> Repo.one || 0
+    finish_habit_query =
+      from(h in Habit,
+        join: f in subquery(finish_habit_id_query),
+        where: h.id == f.habit_id,
+        select: sum(h.score)
+      )
+
+    finish_habit_query |> Repo.one() || 0
   end
 
   defp sum_score_week_finish_habit(open_id, start_date) do

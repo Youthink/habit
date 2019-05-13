@@ -14,8 +14,7 @@ config :habit, HabitWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "LO7xqoGLEfUulSd5ZCoEh+HiqoI8OqysIa0ozW84YRS6PFhbN+Dba69o1wJeopGL",
   render_errors: [view: HabitWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Habit.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Habit.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -34,4 +33,4 @@ config :ueberauth, Ueberauth.Strategy.Github.OAuth,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"
