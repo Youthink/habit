@@ -6,10 +6,16 @@ defmodule HabitWeb.Router do
     plug(:fetch_session)
   end
 
+  pipeline :authenticated do
+    plug(HabitWeb.Plug.Authentication_check)
+  end
+
   scope "/api/v1", HabitWeb do
     pipe_through(:api)
 
     scope "/habit" do
+      pipe_through(:authenticated)
+
       resources("/", HabitController, only: [:index, :create, :update])
       post("/complete", HabitController, :complete)
     end

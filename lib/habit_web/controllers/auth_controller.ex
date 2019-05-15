@@ -13,6 +13,7 @@ defmodule HabitWeb.AuthController do
   def delete(conn, _params) do
     conn
     |> put_status(200)
+    |> configure_session(drop: true)
     |> json(%{success: true, apiMessage: "You have been logged out!"})
   end
 
