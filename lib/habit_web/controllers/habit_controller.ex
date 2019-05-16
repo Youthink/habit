@@ -24,19 +24,13 @@ defmodule HabitWeb.HabitController do
     end
   end
 
-  def update(conn, %{
-        "code" => code,
-        "openId" => open_id,
-        "name" => name,
-        "score" => score,
-        "id" => id
-      }) do
+  def update(conn, %{ "name" => name, "score" => score, "id" => id }) do
     case Habit.update(id, name, score) do
       {:error, :habit_id_invalid} ->
         fail(conn, %{apiMessage: "无效的习惯id，习惯编辑失败", apiCode: 3000})
 
-      {:ok} ->
-        success(conn, %{apiMessage: "习惯编辑成功"})
+      {:ok, habit} ->
+        success(conn, %{apiMessage: "习惯编辑成功", data: habit})
 
       _ ->
         fail(conn, %{apiMessage: "习惯编辑失败"})

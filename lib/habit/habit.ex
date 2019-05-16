@@ -33,18 +33,24 @@ defmodule Habit.Habit do
   end
 
   def update(id, name, score) do
-    case Repo.get(Habit, id) do
+    case Repo.get!(Habit, id) do
       nil ->
         {:error, :habit_id_invalid}
 
       habit = %Habit{} ->
-        a =
           habit
-          |> changeset(%{name: habit.name, score: habit.score})
-          |> Repo.update()
-
-        IO.inspect(a)
+          |> changeset(%{name: name, score: score})
+          |> Repo.update!()
+          |> return_update_habit_info()
     end
+  end
+
+  defp return_update_habit_info(habit = %Habit{}) do
+    {:ok, %{name: habit.name, id: habit.id, score: habit.score}}
+  end
+
+  defp return_update_habit_info() do
+    {:error}
   end
 
   defp add_habit(user, name, score) do
