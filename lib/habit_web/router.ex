@@ -18,6 +18,7 @@ defmodule HabitWeb.Router do
 
       resources("/", HabitController, only: [:index, :create, :update])
       post("/complete", HabitController, :complete)
+      post("/cancel", HabitController, :cancel)
     end
 
     get("/day", DayController, :index)

@@ -86,6 +86,14 @@ defmodule Habit.Habit do
     {:error, :check_in_fail}
   end
 
+  def cancel(user, habit_id) do
+    # TODO: First of all, according to the date and habit_id to query
+    case Day.delete(user, habit_id) do
+      {:ok, day} -> {:ok, :cancel_success}
+      _ -> {:error, :cancel_fail}
+    end
+  end
+
   defp is_undefined_or_null(value) do
     if value === "undefined" || value === "null" do
       true

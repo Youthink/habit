@@ -34,6 +34,17 @@ defmodule Habit.Day do
     |> Repo.insert()
   end
 
+  def delete(user, habit_id) do
+    # according to date
+    from(d in Day,
+      where: d.habit_id == ^String.to_integer(habit_id),
+      order_by: [desc: d.inserted_at],
+      limit: 1
+    )
+    |> Repo.one()
+    |> Repo.delete()
+  end
+
   def list(open_id, date) do
     start_date = Date.from_iso8601!(date)
     end_date = Date.add(start_date, 1)
