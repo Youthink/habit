@@ -3,6 +3,7 @@ defmodule HabitWeb.HabitController do
   alias Habit.{Habit, Repo}
 
   def index(conn, %{}) do
+    current_user = get_session(conn, :current_user)
     data = Habit.list(current_user.id)
     json(conn, %{success: true, data: data})
   end
@@ -43,6 +44,7 @@ defmodule HabitWeb.HabitController do
   end
 
   def create(conn, %{"name" => name, "score" => score}) do
+    current_user = get_session(conn, :current_user)
     case Habit.create(current_user, name, score) do
       {:error, :user_info_invalid} ->
         fail(conn, %{apiMessage: "用户身份验证失败", apiCode: 1000})
@@ -62,13 +64,14 @@ defmodule HabitWeb.HabitController do
     fail(conn, %{apiMessage: "参数有误", apiCode: 2000})
   end
 
-  def check_in(conn, %{"code" => code, "openId" => open_id, "habitId" => habit_id}) do
+  def complete(conn, %{"habitId" => habit_id}) do
     # TODO: Date of need parameters
-    case Habit.check_in(open_id, habit_id) do
+    current_user = get_session(conn, :current_user)
+    case Habit.check_in(current_user, habit_id) do
       {:error, :check_in_fail} ->
         fail(conn, %{apiMessage: "习惯打卡失败", apiCode: 2002})
 
-      {:ok, :check_in_success} ->
+      {:ok, :check_in_success } ->
         success(conn, %{apiMessage: "习惯打卡成功"})
     end
   end
