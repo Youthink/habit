@@ -21,7 +21,11 @@ defmodule HabitWeb.Router do
       post("/cancel", HabitController, :cancel)
     end
 
-    get("/day", DayController, :index)
+    scope "/day" do
+      pipe_through(:authenticated)
+
+      resources("/", DayController, only: [:index])
+    end
 
     delete("/logout", AuthController, :delete)
 

@@ -2,8 +2,9 @@ defmodule HabitWeb.DayController do
   use HabitWeb, :controller
   alias Habit.Day
 
-  def index(conn, %{"code" => code, "openId" => open_id, "date" => date}) do
-    data = Day.list(open_id, date)
+  def index(conn, %{"date" => date}) do
+    current_user = get_session(conn, :current_user)
+    data = Day.list(current_user, date)
     json(conn, %{success: true, data: data})
   end
 

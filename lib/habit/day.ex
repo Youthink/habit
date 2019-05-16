@@ -45,10 +45,10 @@ defmodule Habit.Day do
     |> Repo.delete()
   end
 
-  def list(open_id, date) do
+  def list(user, date) do
     start_date = Date.from_iso8601!(date)
     end_date = Date.add(start_date, 1)
-    finish_habit_id_query = finish_habit_id_query(open_id, start_date, end_date)
+    finish_habit_id_query = finish_habit_id_query(user, start_date, end_date)
 
     finish_habit_query =
       from(h in Habit,
@@ -63,7 +63,7 @@ defmodule Habit.Day do
       from(d in Day,
         join: u in User,
         where:
-          u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^start_date and
+          u.id== ^user.id and fragment("?::date", d.inserted_at) >= ^start_date and
             fragment("?::date", d.inserted_at) <= ^end_date,
         select: d.habit_id
       )
@@ -82,9 +82,9 @@ defmodule Habit.Day do
 
     habits_list = unfinish_list ++ finish_list
 
-    total_score = sum_score_finish_habit(open_id, start_date, end_date)
+    total_score = sum_score_finish_habit(user, start_date, end_date)
 
-    week_total_score = sum_score_week_finish_habit(open_id, start_date)
+    week_total_score = sum_score_week_finish_habit(user, start_date)
 
     %{
       "habitsList" => habits_list,
@@ -93,17 +93,17 @@ defmodule Habit.Day do
     }
   end
 
-  defp finish_habit_id_query(open_id, start_date, end_date) do
+  defp finish_habit_id_query(user, start_date, end_date) do
     from(d in Day,
       join: u in User,
       where:
-        u.open_id == ^open_id and fragment("?::date", d.inserted_at) >= ^start_date and
+        u.id == ^user.id and fragment("?::date", d.inserted_at) >= ^start_date and
           fragment("?::date", d.inserted_at) <= ^end_date
     )
   end
 
-  defp sum_score_finish_habit(open_id, start_date, end_date) do
-    finish_habit_id_query = finish_habit_id_query(open_id, start_date, end_date)
+  defp sum_score_finish_habit(user, start_date, end_date) do
+    finish_habit_id_query = finish_habit_id_query(user, start_date, end_date)
 
     finish_habit_query =
       from(h in Habit,
@@ -115,10 +115,10 @@ defmodule Habit.Day do
     finish_habit_query |> Repo.one() || 0
   end
 
-  defp sum_score_week_finish_habit(open_id, start_date) do
+  defp sum_score_week_finish_habit(user, start_date) do
     end_date = Date.add(start_date, 1)
     week_num = Date.day_of_week(start_date)
     monday_date = Date.add(start_date, -(week_num - 1))
-    sum_score_finish_habit(open_id, monday_date, end_date)
+    sum_score_finish_habit(user, monday_date, end_date)
   end
 end
