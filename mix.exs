@@ -25,7 +25,8 @@ defmodule Habit.Mixfile do
         :runtime_tools,
         :ueberauth,
         :ueberauth_github,
-        :ecto_timestamps
+        :ecto_timestamps,
+        :edeliver
       ]
     ]
   end
@@ -53,6 +54,8 @@ defmodule Habit.Mixfile do
       {:ueberauth_github, "~> 0.7"},
       {:timex, "~> 3.1"},
       {:ecto_timestamps, "~> 1.0.0"},
+      {:edeliver, ">= 1.6.0"},
+      {:distillery, "~> 2.0", warn_missing: false},
       {:cowboy, "~> 1.0"}
     ]
   end
