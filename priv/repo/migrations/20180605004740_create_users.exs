@@ -3,17 +3,18 @@ defmodule Habit.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
+      add :name, :string
       add :nick, :string
-      add :open_id, :string
-      add :union_id, :string
+      add :email, :string
       add :avatar_url, :string
       add :gender, :string
+      add :location, :string
+      add :sign_source, :string
+      add :github_id, :string
+      add :open_id, :string
+      add :union_id, :string
 
       timestamps()
     end
-
-    create unique_index(:users, :open_id)
-    create unique_index(:users, :union_id)
-
   end
 end
