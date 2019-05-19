@@ -16,7 +16,7 @@ use Mix.Config
 config :habit, HabitWeb.Endpoint,
  #load_from_system_env: true,
   url: [scheme: "http", host: "api.iyearn.top", port: 14000],
-  cache_static_manifest: "priv/static/cache_manifest.json",
+  #cache_static_manifest: "priv/static/cache_manifest.json",
   debug_errors: true
 
 # Do not print debug messages in production
