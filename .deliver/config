@@ -6,8 +6,8 @@ BUILD_HOST="ihabit"
 BUILD_USER="sysop"
 BUILD_AT="/tmp/edeliver/ihabit/builds"
 
-STAGING_HOSTS="ihabit"
-STAGING_USER="sysop"
+PRODUCTION_HOSTS="ihabit"
+PRODUCTION_USER="sysop"
 DELIVER_TO="/home/sysop"
 
 # For *Phoenix* projects, symlink prod.secret.exs to our tmp source
