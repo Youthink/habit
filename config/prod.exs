@@ -16,7 +16,7 @@ use Mix.Config
 config :habit, HabitWeb.Endpoint,
   http: [port: 4000],
   url: [scheme: "http", host: "api.iyearn.top", port: 80],
-  service: true,
+  #service: true,
   #cache_static_manifest: "priv/static/cache_manifest.json",
   debug_errors: true
 
