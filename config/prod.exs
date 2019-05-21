@@ -15,7 +15,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :habit, HabitWeb.Endpoint,
   http: [port: 4000],
-  url: [scheme: "http", host: "api.iyearn.top", port: 80],
+  url: [scheme: "http", host: "ihabit.iyearn.top", port: 80],
   #cache_static_manifest: "priv/static/cache_manifest.json",
   debug_errors: true
 
