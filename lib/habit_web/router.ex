@@ -4,6 +4,7 @@ defmodule HabitWeb.Router do
   pipeline :api do
     plug(:accepts, ["json"])
     plug(:fetch_session)
+    plug(CORSPlug, origin: "*")
   end
 
   pipeline :authenticated do

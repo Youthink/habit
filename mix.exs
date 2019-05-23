@@ -56,7 +56,8 @@ defmodule Habit.Mixfile do
       {:ecto_timestamps, "~> 1.0.0"},
       {:edeliver, ">= 1.6.0"},
       {:distillery, "~> 2.0", warn_missing: false},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:cors_plug, "~> 2.0.0"}
     ]
   end
 
