@@ -24,7 +24,7 @@ config :logger, :console,
 config :ueberauth, Ueberauth,
   base_path: "/api/v1/auth",
   providers: [
-    github: {Ueberauth.Strategy.Github, []}
+    github: {Ueberauth.Strategy.Github, [send_redirect_uri: false]}
   ]
 
 config :ueberauth, Ueberauth.Strategy.Github.OAuth,
