@@ -11,7 +11,7 @@ defmodule HabitWeb.HabitController do
   def show(conn, %{"id" => id}) do
     case Repo.get(Habit, id) do
       nil ->
-        fail(conn, %{apiMessage: "无效的 habit id"})
+        fail(conn, %{apiMessage: "无效的 habit id", apiCode: 2009})
 
       habit = %Habit{} ->
         data = %{
@@ -24,16 +24,16 @@ defmodule HabitWeb.HabitController do
     end
   end
 
-  def update(conn, %{ "name" => name, "score" => score, "id" => id }) do
+  def update(conn, %{"name" => name, "score" => score, "id" => id}) do
     case Habit.update(id, name, score) do
       {:error, :habit_id_invalid} ->
-        fail(conn, %{apiMessage: "无效的习惯id，习惯编辑失败", apiCode: 3000})
+        fail(conn, %{apiMessage: "无效的习惯id，习惯编辑失败", apiCode: 2007})
 
       {:ok, habit} ->
         success(conn, %{apiMessage: "习惯编辑成功", data: habit})
 
       _ ->
-        fail(conn, %{apiMessage: "习惯编辑失败"})
+        fail(conn, %{apiMessage: "习惯编辑失败", apiCode: 2008})
     end
   end
 
@@ -42,13 +42,13 @@ defmodule HabitWeb.HabitController do
 
     case Habit.create(current_user, name, score) do
       {:error, :user_info_invalid} ->
-        fail(conn, %{apiMessage: "用户身份验证失败", apiCode: 1000})
+        fail(conn, %{apiMessage: "用户身份验证失败", apiCode: 1001})
 
       {:error, :habit_name_invalid} ->
         fail(conn, %{apiMessage: "无效的习惯名称，习惯创建失败", apiCode: 2001})
 
       {:error, :habit_score_invalid} ->
-        fail(conn, %{apiMessage: "无效的习惯分数，习惯创建失败", apiCode: 2001})
+        fail(conn, %{apiMessage: "无效的习惯分数，习惯创建失败", apiCode: 2002})
 
       {:ok, :habit_create_success} ->
         success(conn, %{apiMessage: "习惯创建成功"})
@@ -56,20 +56,26 @@ defmodule HabitWeb.HabitController do
   end
 
   def create(conn, _) do
-    fail(conn, %{apiMessage: "参数有误", apiCode: 2000})
+    fail(conn, %{apiMessage: "参数有误", apiCode: 2005})
   end
 
-  def complete(conn, %{"habitId" => habit_id}) do
-    # TODO: Date of need parameters
+  def complete(conn, %{"habitId" => habit_id, "date" => date}) do
     current_user = get_session(conn, :current_user)
 
-    case Habit.check_in(current_user, habit_id) do
+    case Habit.check_in(current_user, date, habit_id) do
       {:error, :check_in_fail} ->
-        fail(conn, %{apiMessage: "习惯打卡失败", apiCode: 2002})
+        fail(conn, %{apiMessage: "习惯打卡失败", apiCode: 2003})
+
+      {:erroe, :completed} ->
+        fail(conn, %{apiMessage: "该习惯已经打卡，不能重复打卡", apiCode: 2004})
 
       {:ok, :check_in_success} ->
         success(conn, %{apiMessage: "习惯打卡成功"})
     end
+  end
+
+  def complete(conn, _) do
+    fail(conn, %{apiMessage: "参数有误", apiCode: 2010})
   end
 
   def cancel(conn, %{"habitId" => habit_id}) do
@@ -78,7 +84,7 @@ defmodule HabitWeb.HabitController do
 
     case Habit.cancel(current_user, habit_id) do
       {:error, :cancel_fail} ->
-        fail(conn, %{apiMessage: "取消打卡失败", apiCode: 2002})
+        fail(conn, %{apiMessage: "取消打卡失败", apiCode: 2006})
 
       {:ok, :cancel_success} ->
         success(conn, %{apiMessage: "取消打卡打卡成功"})
