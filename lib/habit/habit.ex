@@ -38,10 +38,10 @@ defmodule Habit.Habit do
         {:error, :habit_id_invalid}
 
       habit = %Habit{} ->
-          habit
-          |> changeset(%{name: name, score: score})
-          |> Repo.update!()
-          |> return_update_habit_info()
+        habit
+        |> changeset(%{name: name, score: score})
+        |> Repo.update!()
+        |> return_update_habit_info()
     end
   end
 
@@ -80,15 +80,33 @@ defmodule Habit.Habit do
     query |> Repo.all()
   end
 
-  def check_in(user, habit_id) do
-    # TODO: First of all, according to the date and habit_id to query
-    case Day.create(user, habit_id) do
-      {:ok, day} -> {:ok, :check_in_success}
-      _ -> {:error, :check_in_fail}
+  def check_in(user, date, habit_id) do
+    if check_date_habit_status(user, date, habit_id) do
+      {:error, :completed}
+    else
+      case Day.create(user, habit_id) do
+        {:ok, day} -> {:ok, :check_in_success}
+        _ -> {:error, :check_in_fail}
+      end
     end
   end
 
-  def check_in(open_id, habit_id) do
+  defp check_date_habit_status(user, date, habit_id) do
+    start_date = Date.from_iso8601!(date)
+    end_date = Date.add(start_date, 1)
+
+    result =
+      from(d in Day,
+        join: u in User,
+        where:
+          d.user_id == ^user.id and d.habit_id == ^habit_id and
+            fragment("?::date", d.inserted_at) >= ^start_date and
+            fragment("?::date", d.inserted_at) <= ^end_date
+      )
+      |> Repo.exists?()
+  end
+
+  def check_in(user, date, habit_id) do
     {:error, :check_in_fail}
   end
 
