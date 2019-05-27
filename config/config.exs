@@ -21,6 +21,9 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
+
 config :ueberauth, Ueberauth,
   base_path: "/api/v1/auth",
   providers: [

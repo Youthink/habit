@@ -12,7 +12,7 @@ defmodule HabitWeb.Plug.Authentication_check do
       assign(conn, :current_user, current_user)
     else
       conn
-      |> json(%{success: false, apiCode: "1000",apiMessage: "Please login again"})
+      |> json(%{success: false, apiCode: 1000, apiMessage: "Please login again"})
       |> halt()
     end
   end

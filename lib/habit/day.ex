@@ -4,10 +4,6 @@ defmodule Habit.Day do
   import Ecto.Query
   alias Habit.{Habit, Repo, User, Day}
 
-  @timestamps_opts [
-    autogenerate: {EctoTimestamps.Local, :autogenerate, [:sec]}
-  ]
-
   schema "days" do
     field(:status, :string)
 
@@ -63,7 +59,7 @@ defmodule Habit.Day do
       from(d in Day,
         join: u in User,
         where:
-          u.id== ^user.id and fragment("?::date", d.inserted_at) >= ^start_date and
+          u.id == ^user.id and fragment("?::date", d.inserted_at) >= ^start_date and
             fragment("?::date", d.inserted_at) <= ^end_date,
         select: d.habit_id
       )

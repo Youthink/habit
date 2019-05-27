@@ -9,7 +9,7 @@ defmodule HabitWeb.DayController do
   end
 
   def index(conn, _) do
-    json(conn, %{success: false, apiCode: "2000", apiMessage: "缺少日期参数 date"})
+    json(conn, %{success: false, apiCode: 2000, apiMessage: "缺少日期参数 date"})
   end
 
   defp success(conn, data) do

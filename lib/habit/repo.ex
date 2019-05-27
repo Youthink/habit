@@ -1,5 +1,7 @@
 defmodule Habit.Repo do
-  use Ecto.Repo, otp_app: :habit
+  use Ecto.Repo,
+    otp_app: :habit,
+    adapter: Ecto.Adapters.Postgres
 
   @doc """
   Dynamically loads the repository url from the

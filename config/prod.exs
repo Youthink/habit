@@ -16,7 +16,7 @@ use Mix.Config
 config :habit, HabitWeb.Endpoint,
   http: [port: 4000],
   url: [scheme: "http", host: "ihabit.iyearn.top", port: 80],
-  #cache_static_manifest: "priv/static/cache_manifest.json",
+  # cache_static_manifest: "priv/static/cache_manifest.json",
   debug_errors: true
 
 # Do not print debug messages in production

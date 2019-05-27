@@ -21,8 +21,8 @@ defmodule HabitWeb do
     quote do
       use Phoenix.Controller, namespace: HabitWeb
       import Plug.Conn
-      import HabitWeb.Router.Helpers
       import HabitWeb.Gettext
+      alias HabitWeb.Router.Helpers, as: Routes
     end
   end
 
@@ -38,9 +38,9 @@ defmodule HabitWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import HabitWeb.Router.Helpers
       import HabitWeb.ErrorHelpers
       import HabitWeb.Gettext
+      alias HabitWeb.Router.Helpers, as: Routes
     end
   end
 

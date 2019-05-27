@@ -1,7 +1,7 @@
 defmodule HabitWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :habit
 
-  socket("/socket", HabitWeb.UserSocket)
+  socket "/socket", HabitWeb.UserSocket, websocket: true
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -38,6 +38,7 @@ defmodule HabitWeb.Endpoint do
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   plug(Plug.Session,
+    domain: '.iday.top',
     store: :cookie,
     key: "_habit_key",
     signing_salt: "c+XjJB3e"
