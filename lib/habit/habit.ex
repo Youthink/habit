@@ -6,6 +6,10 @@ defmodule Habit.Habit do
 
   require Logger
 
+  @timestamps_opts [
+    autogenerate: {EctoTimestamps.Local, :autogenerate, [:sec]}
+  ]
+
   schema "habits" do
     field(:description, :string)
     field(:name, :string)
