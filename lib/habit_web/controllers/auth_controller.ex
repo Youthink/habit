@@ -29,6 +29,9 @@ defmodule HabitWeb.AuthController do
         conn
         |> put_session(:current_user, user)
         |> configure_session(renew: true)
+        |> redirect(to: "http://fe.iday.top:8000/habit")
+        |> halt()
+        """
         |> json(%{
           success: true,
           data: %{
@@ -37,6 +40,7 @@ defmodule HabitWeb.AuthController do
           },
           apiMessage: "Successfully authenticated."
         })
+        """
 
       {:error, reason} ->
         conn
