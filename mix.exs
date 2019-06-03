@@ -54,7 +54,7 @@ defmodule Habit.Mixfile do
       {:httpoison, "~> 1.0"},
       {:ueberauth, "~> 0.6"},
       {:ueberauth_github, "~> 0.7"},
-      {:ecto_timestamps, "~> 1.0.0", git: "https://github.com/Youthink/ecto_timestamps"},
+      {:ecto_timestamps, "~> 2.0.0", git: "https://github.com/Youthink/ecto_timestamps"},
       {:timex, "~> 3.1"},
       {:edeliver, ">= 1.6.0"},
       {:distillery, "~> 2.0", warn_missing: false},
