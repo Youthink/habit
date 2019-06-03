@@ -66,7 +66,7 @@ defmodule HabitWeb.HabitController do
       {:error, :check_in_fail} ->
         fail(conn, %{apiMessage: "习惯打卡失败", apiCode: 2003})
 
-      {:error, :completed} ->
+      {:erroe, :completed} ->
         fail(conn, %{apiMessage: "该习惯已经打卡，不能重复打卡", apiCode: 2004})
 
       {:ok, :check_in_success} ->

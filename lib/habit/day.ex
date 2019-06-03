@@ -17,8 +17,6 @@ defmodule Habit.Day do
     timestamps()
   end
 
-  @timezone "Asia/Shanghai"
-
   @doc false
   def changeset(day, attrs) do
     day
@@ -48,19 +46,8 @@ defmodule Habit.Day do
   end
 
   def list(user, date) do
-    start_date =
-      date
-      |> Date.from_iso8601!()
-      |> Timex.to_datetime(@timezone)
-      |> Timex.to_datetime()
-      |> Timex.to_date()
-
-    end_date =
-      Date.add(start_date, 1)
-      |> Timex.to_datetime(@timezone)
-      |> Timex.to_datetime()
-      |> Timex.to_date()
-
+    start_date = Date.from_iso8601!(date)
+    end_date = Date.add(start_date, 1)
     finish_habit_id_query = finish_habit_id_query(user, start_date, end_date)
 
     finish_habit_query =

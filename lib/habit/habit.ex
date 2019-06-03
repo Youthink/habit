@@ -21,8 +21,6 @@ defmodule Habit.Habit do
     timestamps()
   end
 
-  @timezone "Asia/Shanghai"
-
   @doc false
   def changeset(habit, attrs) do
     habit
@@ -98,18 +96,8 @@ defmodule Habit.Habit do
   end
 
   defp check_date_habit_status(user, date, habit_id) do
-    start_date =
-      date
-      |> Date.from_iso8601!()
-      |> Timex.to_datetime(@timezone)
-      |> Timex.to_datetime()
-      |> Timex.to_date()
-
-    end_date =
-      Date.add(start_date, 1)
-      |> Timex.to_datetime(@timezone)
-      |> Timex.to_datetime()
-      |> Timex.to_date()
+    start_date = Date.from_iso8601!(date)
+    end_date = Date.add(start_date, 1)
 
     result =
       from(d in Day,
@@ -120,8 +108,6 @@ defmodule Habit.Habit do
             fragment("?::date", d.inserted_at) <= ^end_date
       )
       |> Repo.exists?()
-
-    result
   end
 
   def check_in(user, date, habit_id) do
