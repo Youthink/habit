@@ -106,9 +106,7 @@ defmodule Habit.Habit do
       |> Timex.to_date()
 
     end_date =
-      date
-      |> Date.from_iso8601!()
-      |> Date.add(1)
+      Date.add(start_date, 1)
       |> Timex.to_datetime(@timezone)
       |> Timex.to_datetime()
       |> Timex.to_date()
