@@ -34,12 +34,11 @@ defmodule Habit.Day do
     |> Repo.insert()
   end
 
-  def delete(user, habit_id) do
-    # according to date
+  def delete(user, habit_completed_id, habit_id) do
     from(d in Day,
-      where: d.habit_id == ^String.to_integer(habit_id),
-      order_by: [desc: d.inserted_at],
-      limit: 1
+      where:
+        d.habit_id == ^String.to_integer(habit_id) and d.id == ^habit_completed_id and
+          d.user_id == ^user.id
     )
     |> Repo.one()
     |> Repo.delete()
@@ -54,7 +53,14 @@ defmodule Habit.Day do
       from(h in Habit,
         join: f in subquery(finish_habit_id_query),
         where: h.id == f.habit_id,
-        select: %{id: h.id, name: h.name, score: h.score, date: f.inserted_at, status: "finish"}
+        select: %{
+          id: h.id,
+          name: h.name,
+          score: h.score,
+          date: f.inserted_at,
+          status: "finish",
+          habitCompletedId: f.id
+        }
       )
 
     finish_list = finish_habit_query |> Repo.all()

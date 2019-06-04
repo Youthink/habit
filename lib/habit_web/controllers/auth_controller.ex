@@ -31,6 +31,7 @@ defmodule HabitWeb.AuthController do
         |> configure_session(renew: true)
         |> redirect(external: "http://fe.iday.top:8000/ihabit")
         |> halt()
+
         """
         |> json(%{
           success: true,

@@ -78,11 +78,10 @@ defmodule HabitWeb.HabitController do
     fail(conn, %{apiMessage: "参数有误", apiCode: 2010})
   end
 
-  def cancel(conn, %{"habitId" => habit_id}) do
-    # TODO: Date of need parameters
+  def cancel(conn, %{"habitId" => habit_id, "habitCompletedId" => habit_completed_id}) do
     current_user = get_session(conn, :current_user)
 
-    case Habit.cancel(current_user, habit_id) do
+    case Habit.cancel(current_user, habit_completed_id, habit_id) do
       {:error, :cancel_fail} ->
         fail(conn, %{apiMessage: "取消打卡失败", apiCode: 2006})
 

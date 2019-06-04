@@ -114,9 +114,8 @@ defmodule Habit.Habit do
     {:error, :check_in_fail}
   end
 
-  def cancel(user, habit_id) do
-    # TODO: First of all, according to the date and habit_id to query
-    case Day.delete(user, habit_id) do
+  def cancel(user, habit_completed_id, habit_id) do
+    case Day.delete(user, habit_completed_id, habit_id) do
       {:ok, day} -> {:ok, :cancel_success}
       _ -> {:error, :cancel_fail}
     end
