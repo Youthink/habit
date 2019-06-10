@@ -17,9 +17,13 @@ defmodule HabitWeb.Router do
     scope "/habit" do
       pipe_through(:authenticated)
 
-      resources("/", HabitController, only: [:index, :create, :update])
+      resources("/", HabitController, only: [:index, :create, :update, :delete])
       post("/complete", HabitController, :complete)
       post("/cancel", HabitController, :cancel)
+
+      options("/", HabitController, :options)
+      options("/:id", HabitController, :options)
+
     end
 
     scope "/day" do
