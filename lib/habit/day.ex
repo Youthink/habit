@@ -36,9 +36,7 @@ defmodule Habit.Day do
 
   def delete(user, habit_completed_id, habit_id) do
     from(d in Day,
-      where:
-        d.habit_id == ^habit_id and d.id == ^habit_completed_id and
-          d.user_id == ^user.id
+      where: d.habit_id == ^habit_id and d.id == ^habit_completed_id and d.user_id == ^user.id
     )
     |> Repo.one()
     |> Repo.delete()

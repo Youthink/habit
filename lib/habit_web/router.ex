@@ -23,7 +23,6 @@ defmodule HabitWeb.Router do
 
       options("/", HabitController, :options)
       options("/:id", HabitController, :options)
-
     end
 
     scope "/day" do

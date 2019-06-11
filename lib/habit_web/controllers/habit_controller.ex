@@ -26,6 +26,7 @@ defmodule HabitWeb.HabitController do
 
   def update(conn, %{"name" => name, "score" => score, "id" => id}) do
     current_user = get_session(conn, :current_user)
+
     case Habit.update(id, name, score, current_user.id) do
       {:error, :conditions_not_match} ->
         fail(conn, %{apiMessage: "条件不匹配，习惯编辑失败", apiCode: 2007})

@@ -72,14 +72,15 @@ defmodule Habit.Habit do
     {:ok, %{name: habit.name, id: habit.id, score: habit.score}}
   end
 
-  defp return_update_habit_info() do
+  defp return_update_habit_info(_) do
     {:error}
   end
 
   defp add_habit(user, name, score) do
-    if is_undefined_or_null(score) do
-      score = 0
-    end
+    score =
+      if is_undefined_or_null(score) do
+        0
+      end
 
     %Habit{}
     |> changeset(%{
@@ -114,6 +115,10 @@ defmodule Habit.Habit do
     end
   end
 
+  def check_in(_) do
+    {:error, :check_in_fail}
+  end
+
   defp check_date_habit_status(user, date, habit_id) do
     start_date = Date.from_iso8601!(date)
     end_date = Date.add(start_date, 1)
@@ -128,13 +133,9 @@ defmodule Habit.Habit do
     |> Repo.exists?()
   end
 
-  def check_in(user, date, habit_id) do
-    {:error, :check_in_fail}
-  end
-
   def cancel(user, habit_completed_id, habit_id) do
     case Day.delete(user, habit_completed_id, habit_id) do
-      {:ok, day} -> {:ok, :cancel_success}
+      {:ok, _} -> {:ok, :cancel_success}
       _ -> {:error, :cancel_fail}
     end
   end
