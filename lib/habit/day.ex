@@ -78,7 +78,7 @@ defmodule Habit.Day do
 
     unfinish_habit_query =
       from(h in Habit,
-        where: h.id not in ^arr and h.status != "deleted",
+        where: h.id not in ^arr and h.status != "deleted" and h.user_id == ^user.id,
         distinct: h.id,
         order_by: h.score,
         select: %{id: h.id, name: h.name, score: h.score, status: h.status}

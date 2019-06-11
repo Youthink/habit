@@ -36,10 +36,10 @@ defmodule Habit.Habit do
     end
   end
 
-  def update(id, name, score) do
-    case Repo.get!(Habit, id) do
+  def update(id, name, score, user_id) do
+    case current_user!(id, user_id) do
       nil ->
-        {:error, :habit_id_invalid}
+        {:error, :conditions_not_match}
 
       habit = %Habit{} ->
         habit
@@ -50,21 +50,22 @@ defmodule Habit.Habit do
   end
 
   def delete(id, user_id) do
-    query =
-      from(h in Habit,
-        where: h.id == ^id and h.user_id == ^user_id
-      )
-      |> Repo.one!()
-
-    case query do
-      nil ->
-        {:error, :conditions_not_match}
-
+    case current_user!(id, user_id) do
       habit = %Habit{} ->
         habit
         |> changeset(%{status: "deleted"})
         |> Repo.update()
+
+      _ ->
+        {:error, :conditions_not_match}
     end
+  end
+
+  defp current_user!(habit_id, user_id) do
+    from(h in Habit,
+      where: h.id == ^habit_id and h.user_id == ^user_id
+    )
+    |> Repo.one()
   end
 
   defp return_update_habit_info(habit = %Habit{}) do
@@ -84,7 +85,7 @@ defmodule Habit.Habit do
     |> changeset(%{
       user_id: user.id,
       name: name,
-      score: String.to_integer(score)
+      score: score
     })
     |> Repo.insert()
 
@@ -107,7 +108,7 @@ defmodule Habit.Habit do
       {:error, :completed}
     else
       case Day.create(user, habit_id) do
-        {:ok, day} -> {:ok, :check_in_success}
+        {:ok, _} -> {:ok, :check_in_success}
         _ -> {:error, :check_in_fail}
       end
     end
@@ -117,15 +118,14 @@ defmodule Habit.Habit do
     start_date = Date.from_iso8601!(date)
     end_date = Date.add(start_date, 1)
 
-    result =
-      from(d in Day,
-        join: u in User,
-        where:
-          d.user_id == ^user.id and d.habit_id == ^habit_id and
-            fragment("?::date", d.inserted_at) >= ^start_date and
-            fragment("?::date", d.inserted_at) <= ^end_date
-      )
-      |> Repo.exists?()
+    from(d in Day,
+      join: u in User,
+      where:
+        d.user_id == ^user.id and d.habit_id == ^habit_id and
+          fragment("?::date", d.inserted_at) >= ^start_date and
+          fragment("?::date", d.inserted_at) <= ^end_date
+    )
+    |> Repo.exists?()
   end
 
   def check_in(user, date, habit_id) do
