@@ -49,6 +49,24 @@ defmodule Habit.Habit do
     end
   end
 
+  def delete(id, user_id) do
+    query =
+      from(h in Habit,
+        where: h.id == ^id and h.user_id == ^user_id
+      )
+      |> Repo.one!()
+
+    case query do
+      nil ->
+        {:error, :conditions_not_match}
+
+      habit = %Habit{} ->
+        habit
+        |> changeset(%{status: "deleted"})
+        |> Repo.update()
+    end
+  end
+
   defp return_update_habit_info(habit = %Habit{}) do
     {:ok, %{name: habit.name, id: habit.id, score: habit.score}}
   end

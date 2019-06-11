@@ -37,7 +37,7 @@ defmodule Habit.Day do
   def delete(user, habit_completed_id, habit_id) do
     from(d in Day,
       where:
-        d.habit_id == ^String.to_integer(habit_id) and d.id == ^habit_completed_id and
+        d.habit_id == ^habit_id and d.id == ^habit_completed_id and
           d.user_id == ^user.id
     )
     |> Repo.one()
@@ -78,10 +78,10 @@ defmodule Habit.Day do
 
     unfinish_habit_query =
       from(h in Habit,
-        where: h.id not in ^arr,
+        where: h.id not in ^arr and h.status != "deleted",
         distinct: h.id,
         order_by: h.score,
-        select: %{id: h.id, name: h.name, score: h.score, status: "init"}
+        select: %{id: h.id, name: h.name, score: h.score, status: h.status}
       )
 
     unfinish_list = unfinish_habit_query |> Repo.all()

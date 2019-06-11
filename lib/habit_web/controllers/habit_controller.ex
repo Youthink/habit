@@ -37,6 +37,21 @@ defmodule HabitWeb.HabitController do
     end
   end
 
+  def delete(conn, %{"id" => id}) do
+    current_user = get_session(conn, :current_user)
+
+    case Habit.delete(id, current_user.id) do
+      {:error, :conditions_not_match} ->
+        fail(conn, %{apiMessage: "条件不匹配，习惯删除失败", apiCode: 2012})
+
+      {:ok, habit} ->
+        success(conn, %{apiMessage: "习惯删除成功"})
+
+      _ ->
+        fail(conn, %{apiMessage: "习惯删除失败", apiCode: 2011})
+    end
+  end
+
   def create(conn, %{"name" => name, "score" => score}) do
     current_user = get_session(conn, :current_user)
 
