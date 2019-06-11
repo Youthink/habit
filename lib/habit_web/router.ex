@@ -1,10 +1,12 @@
 defmodule HabitWeb.Router do
   use HabitWeb, :router
 
+  @fe_address Application.get_env(:habit, :fe_address)
+
   pipeline :api do
     plug(:accepts, ["json"])
     plug(:fetch_session)
-    plug(CORSPlug, origin: "http://fe.iday.top:8000")
+    plug(CORSPlug, origin: @fe_address)
   end
 
   pipeline :authenticated do

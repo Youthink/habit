@@ -15,12 +15,14 @@ use Mix.Config
 # which you typically run after static files are built.
 config :habit, HabitWeb.Endpoint,
   http: [port: 4000],
-  url: [scheme: "http", host: "ihabit.iyearn.top", port: 80],
+  url: [scheme: "http", host: "iday.top", port: 80],
   # cache_static_manifest: "priv/static/cache_manifest.json",
   debug_errors: true
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+config :habit, fe_address: "http://iday.top"
 
 # ## SSL Support
 #

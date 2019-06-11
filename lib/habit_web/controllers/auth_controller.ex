@@ -7,6 +7,8 @@ defmodule HabitWeb.AuthController do
 
   plug(Ueberauth)
 
+  @fe_address Application.get_env(:habit, :fe_address)
+
   def request(conn, _params) do
   end
 
@@ -29,7 +31,7 @@ defmodule HabitWeb.AuthController do
         conn
         |> put_session(:current_user, user)
         |> configure_session(renew: true)
-        |> redirect(external: "http://fe.iday.top:8000/ihabit")
+        |> redirect(external: @fe_address)
         |> halt()
 
         """

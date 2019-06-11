@@ -13,6 +13,8 @@ config :habit, HabitWeb.Endpoint,
   check_origin: false,
   watchers: []
 
+config :habit, fe_address: "http://fe.iday.top:8000"
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
