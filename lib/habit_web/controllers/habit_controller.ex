@@ -46,7 +46,7 @@ defmodule HabitWeb.HabitController do
       {:error, :conditions_not_match} ->
         fail(conn, %{apiMessage: "条件不匹配，习惯删除失败", apiCode: 2012})
 
-      {:ok, habit} ->
+      {:ok, _} ->
         success(conn, %{apiMessage: "习惯删除成功"})
 
       _ ->

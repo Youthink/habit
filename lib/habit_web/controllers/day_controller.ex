@@ -11,12 +11,4 @@ defmodule HabitWeb.DayController do
   def index(conn, _) do
     json(conn, %{success: false, apiCode: 2000, apiMessage: "缺少日期参数 date"})
   end
-
-  defp success(conn, data) do
-    json(conn, Map.merge(data, %{success: true}))
-  end
-
-  defp fail(conn, data) do
-    json(conn, Map.merge(data, %{success: false}))
-  end
 end
