@@ -80,6 +80,8 @@ defmodule Habit.Habit do
     score =
       if is_undefined_or_null(score) do
         0
+      else
+        score
       end
 
     %Habit{}
