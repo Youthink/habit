@@ -27,7 +27,7 @@ config :phoenix, :json_library, Jason
 config :ueberauth, Ueberauth,
   base_path: "/api/v1/auth",
   providers: [
-    github: {Ueberauth.Strategy.Github, [send_redirect_uri: false, allow_private_emails: true]}
+    github: {Ueberauth.Strategy.Github, [send_redirect_uri: false, default_scope: "user"]}
   ]
 
 config :ueberauth, Ueberauth.Strategy.Github.OAuth,
