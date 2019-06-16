@@ -33,6 +33,12 @@ defmodule HabitWeb.Router do
       resources("/", DayController, only: [:index])
     end
 
+    scope "/user" do
+      pipe_through(:authenticated)
+
+      resources("/", UserController, only: [:index])
+    end
+
     delete("/logout", AuthController, :delete)
 
     scope "/auth" do
