@@ -99,9 +99,8 @@ defmodule Habit.Day do
 
   defp finish_habit_id_query(user, start_date, end_date) do
     from(d in Day,
-      join: u in User,
       where:
-        u.id == ^user.id and fragment("?::date", d.inserted_at) >= ^start_date and
+        d.user_id == ^user.id and fragment("?::date", d.inserted_at) >= ^start_date and
           fragment("?::date", d.inserted_at) <= ^end_date
     )
   end
